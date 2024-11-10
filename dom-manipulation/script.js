@@ -76,3 +76,63 @@ window.onload = function() {
     showRandomQuote();
     createAddQuoteForm(); // Dynamically create the form to add quotes
 };
+let quotes = [];
+
+// Load quotes from local storage if available
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem('quotes');
+  if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+  }
+}
+
+// Save quotes to local storage
+function saveQuotes() {
+  localStorage.setItem('quotes', JSON.stringify(quotes));
+}
+
+// Example function to add a quote
+function addQuote(newQuote) {
+  quotes.push(newQuote);
+  saveQuotes();
+  renderQuotes();
+}
+
+// Load quotes when the page is initialized
+window.onload = function() {
+  loadQuotes();
+  renderQuotes();
+};
+// Export quotes to a JSON file
+function exportToJson() {
+    const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'quotes.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+  
+  // Example button to trigger the export
+  document.getElementById('exportButton').addEventListener('click', exportToJson);
+  // Import quotes from a JSON file
+function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(event) {
+      try {
+        const importedQuotes = JSON.parse(event.target.result);
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        alert('Quotes imported successfully!');
+        renderQuotes();
+      } catch (error) {
+        alert('Failed to import quotes. Please ensure the file is in valid JSON format.');
+      }
+    };
+    fileReader.readAsText(event.target.files[0]);
+  }
+  
+  // Example input field to trigger the import
+  document.getElementById('importFile').addEventListener('change', importFromJsonFile);
+  
