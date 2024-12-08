@@ -78,3 +78,4 @@ function initializeApp() {
 }
 
 window.onload = initializeApp;
+
