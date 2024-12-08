@@ -22,7 +22,7 @@
     .form-container {
       margin-top: 20px;
     }
-    input, button {
+    input, button, select {
       padding: 10px;
       margin: 5px 0;
       display: block;
@@ -44,6 +44,15 @@
   <div id="quoteDisplay">Click the button to see a quote!</div>
   <button id="newQuote">Show New Quote</button>
 
+  <!-- Category Filter Dropdown -->
+  <div class="category-filter">
+    <h3>Filter Quotes by Category</h3>
+    <select id="categoryFilter" onchange="filterQuotes()">
+      <option value="all">All Categories</option>
+      <!-- Categories will be populated dynamically -->
+    </select>
+  </div>
+
   <div class="form-container">
     <h2>Add a New Quote</h2>
     <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
@@ -57,9 +66,8 @@
     <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
   </div>
 
-  <div id="message"></div> <!-- For success/error messages -->
+  <div id="message"></div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
