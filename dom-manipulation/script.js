@@ -19,10 +19,19 @@ function displayQuotes(filteredQuotes) {
   }
 }
 
-// Function to populate the category filter dropdown
+// Function to populate the categories in the category filter
 function populateCategories() {
-  const categories = new Set(quotes.map(quote => quote.category));
+  const categories = new Set(quotes.map(quote => quote.category)); // Using map to extract categories
   const categoryFilter = document.getElementById("categoryFilter");
+
+  // Remove any previous options from the dropdown
+  categoryFilter.innerHTML = '';
+
+  // Add the "All Categories" option as the first item
+  const allOption = document.createElement("option");
+  allOption.value = "all";
+  allOption.textContent = "All Categories";
+  categoryFilter.appendChild(allOption);
 
   // Add categories to the dropdown
   categories.forEach(category => {
@@ -31,12 +40,6 @@ function populateCategories() {
     option.textContent = category;
     categoryFilter.appendChild(option);
   });
-
-  // Add the "All Categories" option as the first item
-  const allOption = document.createElement("option");
-  allOption.value = "all";
-  allOption.textContent = "All Categories";
-  categoryFilter.insertBefore(allOption, categoryFilter.firstChild);
 }
 
 // Function to filter quotes based on the selected category
@@ -102,4 +105,5 @@ function initializeApp() {
 
 // Run the initialization when the window loads
 window.onload = initializeApp;
+
 
