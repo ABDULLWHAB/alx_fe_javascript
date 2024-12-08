@@ -16,6 +16,8 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       background-color: #f9f9f9;
+      min-height: 100px;
+      text-align: center;
     }
     .form-container {
       margin-top: 20px;
@@ -24,6 +26,16 @@
       padding: 10px;
       margin: 5px 0;
       display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #message {
+      margin-top: 20px;
+      color: green;
+      font-size: 1.1em;
+    }
+    .file-input-container {
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -38,6 +50,16 @@
     <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
     <button id="addQuoteBtn">Add Quote</button>
   </div>
+
+  <div class="file-input-container">
+    <h3>Import/Export Quotes</h3>
+    <button id="exportQuotesBtn">Export Quotes to JSON</button>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  </div>
+
+  <div id="message"></div> <!-- For success/error messages -->
+
   <script src="script.js"></script>
 </body>
 </html>
+
