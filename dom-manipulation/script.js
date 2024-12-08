@@ -9,6 +9,26 @@ async function fetchQuotesFromServer() {
   }));
 }
 
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: quote.text,
+        body: quote.category,
+        userId: 1
+      })
+    });
+    const result = await response.json();
+    console.log('Quote posted to server:', result);
+  } catch (error) {
+    console.error('Error posting quote to server:', error);
+  }
+}
+
 async function syncDataWithServer() {
   try {
     const serverQuotes = await fetchQuotesFromServer();
@@ -26,7 +46,19 @@ async function syncDataWithServer() {
   }
 }
 
-setInterval(syncDataWithServer, 30000);
+function addQuote() {
+  const newQuoteText = document.getElementById("newQuoteText").value.trim();
+  const newQuoteCategory = document.getElementById("newQuoteCategory").value.trim();
+  if (newQuoteText && newQuoteCategory) {
+    const newQuote = { text: newQuoteText, category: newQuoteCategory };
+    quotes.push(newQuote);
+    localStorage.setItem('quotes', JSON.stringify(quotes));
+    postQuoteToServer(newQuote);
+    alert("Quote added successfully!");
+  } else {
+    alert("Please fill out both fields before adding a quote.");
+  }
+}
 
 function notifyUser(message) {
   const notificationContainer = document.getElementById('notification');
@@ -35,19 +67,6 @@ function notifyUser(message) {
   setTimeout(() => {
     notificationContainer.style.display = 'none';
   }, 5000);
-}
-
-function addQuote() {
-  const newQuoteText = document.getElementById("newQuoteText").value.trim();
-  const newQuoteCategory = document.getElementById("newQuoteCategory").value.trim();
-  if (newQuoteText && newQuoteCategory) {
-    const newQuote = { text: newQuoteText, category: newQuoteCategory };
-    quotes.push(newQuote);
-    localStorage.setItem('quotes', JSON.stringify(quotes));
-    alert("Quote added successfully!");
-  } else {
-    alert("Please fill out both fields before adding a quote.");
-  }
 }
 
 document.getElementById("newQuote").addEventListener("click", filterQuotes);
