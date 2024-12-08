@@ -29,7 +29,7 @@ async function postQuoteToServer(quote) {
   }
 }
 
-async function syncDataWithServer() {
+async function syncQuotes() {
   try {
     const serverQuotes = await fetchQuotesFromServer();
     const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
@@ -73,9 +73,10 @@ document.getElementById("newQuote").addEventListener("click", filterQuotes);
 document.getElementById("addQuoteBtn").addEventListener("click", addQuote);
 
 function initializeApp() {
-  syncDataWithServer();
-  setInterval(syncDataWithServer, 30000);
+  syncQuotes();
+  setInterval(syncQuotes, 30000);
 }
 
 window.onload = initializeApp;
+
 
