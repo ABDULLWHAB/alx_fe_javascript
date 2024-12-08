@@ -10,8 +10,11 @@ const quotes = [
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex];
     const quoteDisplay = document.getElementById("quoteDisplay");
-    quoteDisplay.textContent = `"${quote.text}" - (${quote.category})`;
+  
+    // Use innerHTML to include the quote and its category
+    quoteDisplay.innerHTML = `"${quote.text}" <br><em>(${quote.category})</em>`;
   }
+  
   
   // Function to add a new quote
   function addQuote() {
