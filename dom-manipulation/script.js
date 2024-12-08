@@ -1,75 +1,50 @@
 
-const quotes = [
-  { text: "The best way to predict the future is to invent it.", category: "Inspiration" },
-  { text: "Life is 10% what happens to us and 90% how we react to it.", category: "Motivation" },
-  { text: "An unexamined life is not worth living.", category: "Philosophy" }
-];
+let quotes = JSON.parse(localStorage.getItem('quotes')) || [];
 
 
-function displayQuotes(filteredQuotes) {
-  const quoteDisplay = document.getElementById("quoteDisplay");
-  quoteDisplay.innerHTML = '';
-
-  if (filteredQuotes.length === 0) {
-    quoteDisplay.innerHTML = 'No quotes available for this category.';
-  } else {
-    
-    const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
-    const quote = filteredQuotes[randomIndex];
-    quoteDisplay.innerHTML = `"${quote.text}" <br><em>(${quote.category})</em>`;
-  }
+function fetchQuotesFromServer() {
+  return fetch('https://jsonplaceholder.typicode.com/posts') 
+    .then(response => response.json())
+    .then(data => {
+      return data.map(item => ({
+        text: item.title,
+        category: "General"
+      }));
+    });
 }
 
 
-function populateCategories() {
-  const categories = new Set(quotes.map(quote => quote.category)); 
-  const categoryFilter = document.getElementById("categoryFilter");
-
-  
-  categoryFilter.innerHTML = '';
-
-  
-  const allOption = document.createElement("option");
-  allOption.value = "all";
-  allOption.textContent = "All Categories";
-  categoryFilter.appendChild(allOption);
-
-  
-  categories.forEach(category => {
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    categoryFilter.appendChild(option);
-  });
+function syncDataWithServer() {
+  fetchQuotesFromServer()
+    .then(serverQuotes => {
+      const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
+      const mergedQuotes = [...serverQuotes, ...localQuotes].reduce((acc, curr) => {
+        if (!acc.some(quote => quote.text === curr.text && quote.category === curr.category)) {
+          acc.push(curr);
+        }
+        return acc;
+      }, []);
+      
+      localStorage.setItem('quotes', JSON.stringify(mergedQuotes));
+      notifyUser('Data has been synced with the server!');
+    })
+    .catch(error => {
+      console.error('Error syncing data with server:', error);
+    });
 }
 
 
-function filterQuotes() {
-  const selectedCategory = document.getElementById("categoryFilter").value;
-  
-  let filteredQuotes = quotes;
-
-  if (selectedCategory !== "all") {
-    filteredQuotes = quotes.filter(quote => quote.category === selectedCategory);
-  }
-
- 
-  displayQuotes(filteredQuotes);
-
-  
-  localStorage.setItem('selectedCategory', selectedCategory);
-}
+setInterval(syncDataWithServer, 30000);
 
 
-function loadSelectedFilter() {
-  const lastSelectedCategory = localStorage.getItem('selectedCategory') || 'all';
-  const categoryFilter = document.getElementById("categoryFilter");
+function notifyUser(message) {
+  const notificationContainer = document.getElementById('notification');
+  notificationContainer.innerHTML = message;
+  notificationContainer.style.display = 'block';
 
-  
-  categoryFilter.value = lastSelectedCategory;
-
-  
-  filterQuotes();
+  setTimeout(() => {
+    notificationContainer.style.display = 'none';
+  }, 5000);
 }
 
 
@@ -78,16 +53,10 @@ function addQuote() {
   const newQuoteCategory = document.getElementById("newQuoteCategory").value.trim();
 
   if (newQuoteText && newQuoteCategory) {
-    quotes.push({ text: newQuoteText, category: newQuoteCategory });
+    const newQuote = { text: newQuoteText, category: newQuoteCategory };
+    quotes.push(newQuote);
+    localStorage.setItem('quotes', JSON.stringify(quotes));
     alert("Quote added successfully!");
-    document.getElementById("newQuoteText").value = "";
-    document.getElementById("newQuoteCategory").value = "";
-
-    
-    populateCategories();
-
-    
-    filterQuotes();
   } else {
     alert("Please fill out both fields before adding a quote.");
   }
@@ -100,8 +69,8 @@ document.getElementById("addQuoteBtn").addEventListener("click", addQuote);
 
 function initializeApp() {
   
-  populateCategories();
-  loadSelectedFilter();  
+  syncDataWithServer(); 
+  setInterval(syncDataWithServer, 30000); 
 }
 
 
