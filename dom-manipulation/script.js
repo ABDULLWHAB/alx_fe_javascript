@@ -40,7 +40,7 @@ async function syncQuotes() {
       return acc;
     }, []);
     localStorage.setItem('quotes', JSON.stringify(mergedQuotes));
-    notifyUser('Data has been synced with the server!');
+    notifyUser('Quotes synced with server!');
   } catch (error) {
     console.error('Error syncing data with server:', error);
   }
